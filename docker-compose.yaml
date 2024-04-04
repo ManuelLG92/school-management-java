@@ -1,0 +1,85 @@
+services:
+  #  app:
+  #    container_name: school-challenge
+  #    image: school-challenge:latest
+  #    build:
+  #      context: .
+  #      dockerfile: Dockerfile
+  #      args:
+  #        JAR_FILE: ./target/school-0.0.1-SNAPSHOT.jar
+  #    environment:
+  #      APP_SERVER_PORT: "8080"
+  #      APP_MONGODB_CLUSTER: "mongodb"
+  #      APP_MONGODB_PORT: "27017"
+  #      APP_MONGODB_DB: "school"
+  #      APP_MONGODB_USER: "user"
+  #      APP_MONGODB_PASSWORD: "password"
+  #      APP_POSTGRES_HOST: "postgres"
+  #      APP_POSTGRES_PORT: "5432"
+  #      APP_POSTGRES_DB: "school"
+  #      APP_KAFKA_SECURITY_PROTOCOL: "PLAINTEXT"
+  #      APP_KAFKA_JAAS_ENABLED: "false"
+  #      APP_KAFKA_BOOTSTRAP_SERVERS: "http://kafka-broker:9092"
+  #      APP_KAFKA_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+  #    ports:
+  #      - "8080:8080"
+  #    depends_on:
+  #      - mongodb
+  #      - zookeeper
+  #      - kafka-broker
+  mongodb:
+    container_name: 'mongo_school_java'
+    image: 'mongo:latest'
+    environment:
+      - 'MONGO_INITDB_DATABASE=school'
+      - 'MONGO_INITDB_ROOT_PASSWORD=root'
+      - 'MONGO_INITDB_ROOT_USERNAME=root'
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+  postgres:
+    image: 'postgres:latest'
+    container_name: 'postgres_school_java'
+    environment:
+      - 'POSTGRES_DB=school'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=root'
+    ports:
+      - '5432:5432'
+  pgadmin:
+    container_name: pgadmin4_container_school_java
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.2.0
+    container_name: zookeeper_school_java
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka-broker:
+    image: confluentinc/cp-kafka:7.2.0
+    container_name: kafka-broker_school_java
+    hostname: kafka-broker
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    depends_on:
+      - zookeeper_school_java

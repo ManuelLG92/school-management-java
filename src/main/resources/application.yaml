@@ -1,0 +1,37 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${APP_MONGODB_USER:user}:${APP_MONGODB_PASSWORD:password}@${APP_MONGODB_CLUSTER:localhost}:${APP_MONGODB_PORT:27017}/${APP_MONGODB_DB:test}
+  jpa:
+    show-sql: true
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+    properties.hibernate:
+      default_schema: ${APP_POSTGRES_SCHEMA} # https://github.com/lbruun/Pre-Liquibase
+  liquibase:
+    enabled: true
+    #    change-log: classpath:db/db.changelog-master.yaml # https://docs.liquibase.com/tools-integrations/springboot/springboot.html
+    default-schema: ${APP_POSTGRES_SCHEMA} # https://github.com/lbruun/Pre-Liquibase
+  datasource:
+    url: jdbc:postgresql://${APP_POSTGRES_HOST:localhost}:${APP_POSTGRES_PORT:5432}/${APP_POSTGRES_DB:school}
+    username: ${APP_POSTGRES_USER:root}
+    password: ${APP_POSTGRES_PASSWORD:secret}
+  sql:
+    init:
+      mode: always
+  kafka:
+    bootstrap-servers: ${APP_KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: school-id
+logging:
+  level:
+    net:
+      lbruun:
+        springboot:
+          preliquibase: TRACE
+    org:
+      springframework:
+        jdbc:
+          datasource:
+            init: DEBUG
