@@ -4,14 +4,15 @@ import com.education.management.shared.infrastructure.persistence.inmemory.CrudR
 import com.education.management.student.domain.Student;
 import com.education.management.student.repositories.StudentInMemoryRepository;
 import jakarta.annotation.PostConstruct;
-import java.util.Collection;
-import java.util.Objects;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.Objects;
+
 @Repository
-public class StudentInMemoryInMemoryRepositoryImplementation extends CrudRepository<Student>
+public class StudentInMemoryRepositoryImplementation extends CrudRepository<Student>
     implements StudentInMemoryRepository {
-  public StudentInMemoryInMemoryRepositoryImplementation() {
+  public StudentInMemoryRepositoryImplementation() {
     super(Student.class.getSimpleName());
   }
 
